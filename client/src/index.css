@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gemini-bg text-gemini-textMain antialiased transition-colors duration-300;
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+/* Custom scrollbar for webkit - Gemini style */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-[#444746] rounded-full border-[3px] border-solid border-gemini-bg;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-[#5f6368];
+}
+
+/* Gemini Gradient Text */
+.gemini-gradient {
+  background: linear-gradient(74deg, #4285f4 0, #9b72cb 9%, #d96570 20%, #d96570 24%, #9b72cb 35%, #4285f4 44%, #9b72cb 50%, #d96570 56%, #131314 75%, #131314 100%);
+  background-size: 400% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Base Prose Overrides for Dark Mode */
+.prose-gemini p {
+  @apply leading-relaxed mb-4 text-gemini-textMain;
+}
+.prose-gemini img {
+  @apply rounded-2xl border border-gemini-border my-4;
+}
