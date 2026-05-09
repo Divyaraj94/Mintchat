@@ -12,10 +12,18 @@ export const getChats = async (req, res) => {
 
 export const createChat = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, type = 'chat' } = req.body;
+
+    // Prevent duplicate names for the same user
+    const existing = await Chat.findOne({ userId: req.user._id, name });
+    if (existing) {
+      return res.status(400).json({ message: `A ${existing.type} with this name already exists. Please choose a different name.` });
+    }
+
     const newChat = new Chat({
       userId: req.user._id,
       name,
+      type,
     });
     const createdChat = await newChat.save();
     res.status(201).json(createdChat);
@@ -34,15 +42,14 @@ export const renameChat = async (req, res) => {
       return res.status(404).json({ message: 'Chat not found' });
     }
 
-    const oldName = chat.name;
+    // Prevent renaming to an existing name
+    const existing = await Chat.findOne({ userId: req.user._id, name: newName, _id: { $ne: id } });
+    if (existing) {
+      return res.status(400).json({ message: `A ${existing.type} with this name already exists. Please choose a different name.` });
+    }
+
     chat.name = newName;
     const updatedChat = await chat.save();
-
-    // Also update all notes that used the old name
-    await Note.updateMany(
-      { userId: req.user._id, category: oldName },
-      { $set: { category: newName } }
-    );
 
     res.json(updatedChat);
   } catch (error) {
@@ -58,11 +65,10 @@ export const deleteChat = async (req, res) => {
       return res.status(404).json({ message: 'Chat not found' });
     }
 
-    const chatName = chat.name;
     await chat.deleteOne();
 
-    // Delete all notes in this chat
-    await Note.deleteMany({ userId: req.user._id, category: chatName });
+    // Delete all notes linked to this chat by chatId
+    await Note.deleteMany({ chatId: id });
 
     res.json({ message: 'Chat deleted' });
   } catch (error) {

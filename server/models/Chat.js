@@ -15,6 +15,11 @@ const chatSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    type: {
+      type: String,
+      enum: ['chat', 'notebook', 'gem'],
+      default: 'chat',
+    },
   },
   {
     timestamps: true,

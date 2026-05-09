@@ -5,8 +5,11 @@ const userSchema = mongoose.Schema(
   {
     username: {
       type: String,
-      required: true,
+      required: [true, 'Please provide a username'],
       unique: true,
+    },
+    name: {
+      type: String,
     },
     email: {
       type: String,
@@ -23,6 +26,7 @@ const userSchema = mongoose.Schema(
       type: String,
       sparse: true,
     },
+    picture: String,
     resetPasswordToken: String,
     resetPasswordExpire: Date,
   },

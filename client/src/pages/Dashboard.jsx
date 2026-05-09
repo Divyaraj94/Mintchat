@@ -4,47 +4,55 @@ import { useNotes } from '../context/NoteContext';
 import Layout from '../components/Layout';
 import { useNavigate } from 'react-router-dom';
 import { PenTool, BrainCircuit, Briefcase, Lightbulb } from 'lucide-react';
+import { cn } from '../utils/cn';
 import RichTextEditor from '../components/RichTextEditor';
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { setActiveCategory, addNote } = useNotes();
+  const { setActiveCategory, setActiveChatId, addNote, createChat } = useNotes();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setActiveCategory('All');
-  }, [setActiveCategory]);
+    setActiveChatId(null);
+  }, [setActiveCategory, setActiveChatId]);
 
-  const firstName = user?.name ? user.name.split(' ')[0] : 'Divya';
+  const firstName = (user?.name || user?.username || 'Guest').split(' ')[0];
 
-  const handleStartChat = async (content, predefinedTitle = null) => {
+  const handleStartChat = async (content, predefinedTitle = null, type = 'chat') => {
     if (!content.trim() && !content.includes('<img')) return;
+    
+    if (!user) {
+      if (window.confirm("You need to be signed in to start a new chat. Would you like to sign in now?")) {
+        navigate('/login');
+      }
+      return;
+    }
+
     setIsSubmitting(true);
     
-    // Generate a title from content or use predefined
     let chatTitle = predefinedTitle;
     if (!chatTitle) {
       chatTitle = content.trim().split(' ').slice(0, 4).join(' ') || 'New Chat';
       if (chatTitle.length > 30) chatTitle = chatTitle.substring(0, 30) + '...';
     }
 
-    // Append a random string to make it definitely unique
     const uniqueId = Math.random().toString(36).substring(2, 6);
-    const finalCategory = `${chatTitle} - ${uniqueId}`;
+    const finalTitle = `${chatTitle} - ${uniqueId}`;
 
-    // Create the chat first so it immediately appears in sidebar and is persistent
-    await createChat(finalCategory);
-
-    // Then add the note to the newly created chat
-    await addNote(content, finalCategory);
-    
-    setIsSubmitting(false);
-    navigate(`/category/${encodeURIComponent(finalCategory)}`);
+    const newChat = await createChat(finalTitle, type);
+    if (newChat) {
+      await addNote(content, newChat._id);
+      setIsSubmitting(false);
+      navigate(`/chat/${newChat._id}`);
+    } else {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleCardClick = (promptText) => {
-    handleStartChat(promptText);
+  const handleCardClick = (promptText, type = 'chat') => {
+    handleStartChat(promptText, null, type);
   };
 
   return (
@@ -52,41 +60,47 @@ export default function Dashboard() {
       <div className="w-full max-w-[900px] mx-auto px-4 sm:px-8 mt-12 md:mt-24 mb-32 flex flex-col items-center md:items-start text-center md:text-left">
         
         {/* Gemini Greeting */}
-        <h1 className="text-[44px] md:text-[56px] font-medium leading-tight mb-2 tracking-tight">
-          <span className="gemini-gradient">Hello, {firstName}</span>
-        </h1>
-        <h2 className="text-[32px] md:text-[44px] font-medium text-[#444746] leading-tight mb-12 tracking-tight">
-          How can I help you today?
-        </h2>
-
-        {/* Prompt Cards (Suggestions) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 w-full">
-          <button onClick={() => handleCardClick('Jot down a personal reflection or journal entry')} className="bg-gemini-surface hover:bg-gemini-surfaceHover transition-colors rounded-2xl p-4 flex flex-col justify-between h-[120px] md:h-[200px] group border border-transparent hover:border-[#444746] text-left">
-            <p className="text-[15px] text-gemini-textMain leading-snug">Jot down a personal reflection or journal entry</p>
-            <div className="w-8 h-8 rounded-full bg-gemini-bg flex items-center justify-center mt-auto self-end text-gemini-textMain group-hover:scale-110 transition-transform">
-              <PenTool size={16} />
-            </div>
-          </button>
-          
-          <button onClick={() => handleCardClick('Brainstorm a new project or big idea')} className="bg-gemini-surface hover:bg-gemini-surfaceHover transition-colors rounded-2xl p-4 flex flex-col justify-between h-[120px] md:h-[200px] group border border-transparent hover:border-[#444746] text-left">
-            <p className="text-[15px] text-gemini-textMain leading-snug">Brainstorm a new project or big idea</p>
-            <div className="w-8 h-8 rounded-full bg-gemini-bg flex items-center justify-center mt-auto self-end text-gemini-textMain group-hover:scale-110 transition-transform">
-              <Lightbulb size={16} />
-            </div>
+        <div className="mb-12">
+          <h1 className="text-[44px] md:text-[56px] font-medium leading-tight tracking-tight mb-2">
+            <span className="gemini-gradient">Hi {firstName}</span>
+          </h1>
+          <h2 className="text-[32px] md:text-[44px] font-medium text-gemini-textMuted leading-tight tracking-tight">
+            Where should we start?
+          </h2>
+        </div>
+ 
+        {/* Prompt Chips (BrainChat Style) */}
+        <div className="flex flex-wrap gap-3 w-full justify-center md:justify-start">
+          <button 
+            onClick={() => handleCardClick('Start a new story about...', 'notebook')} 
+            className="flex items-center space-x-2 px-4 py-2.5 bg-gemini-surface hover:bg-gemini-surfaceHover rounded-full border border-[#444746] transition-all group"
+          >
+            <span className="text-[#f87171] group-hover:scale-110 transition-transform">✍️</span>
+            <span className="text-[14px] text-gemini-textMain">Start a story</span>
           </button>
 
-          <button onClick={() => handleCardClick('Organize your work tasks and meeting notes')} className="bg-gemini-surface hover:bg-gemini-surfaceHover transition-colors rounded-2xl p-4 flex flex-col justify-between h-[120px] md:h-[200px] group border border-transparent hover:border-[#444746] text-left">
-            <p className="text-[15px] text-gemini-textMain leading-snug">Organize your work tasks and meeting notes</p>
-            <div className="w-8 h-8 rounded-full bg-gemini-bg flex items-center justify-center mt-auto self-end text-gemini-textMain group-hover:scale-110 transition-transform">
-              <Briefcase size={16} />
-            </div>
+          <button 
+            onClick={() => handleCardClick('Valuable idea: ', 'gem')} 
+            className="flex items-center space-x-2 px-4 py-2.5 bg-gemini-surface hover:bg-gemini-surfaceHover rounded-full border border-amber-400/30 transition-all group shadow-[0_0_10px_rgba(251,191,36,0.05)]"
+          >
+            <span className="text-[#fbbf24] group-hover:scale-110 transition-transform">💎</span>
+            <span className="text-[14px] text-gemini-textMain">Capture a Gem</span>
           </button>
 
-          <button onClick={() => handleCardClick('Drop random thoughts and links for later')} className="bg-gemini-surface hover:bg-gemini-surfaceHover transition-colors rounded-2xl p-4 flex flex-col justify-between h-[120px] md:h-[200px] group border border-transparent hover:border-[#444746] text-left">
-            <p className="text-[15px] text-gemini-textMain leading-snug">Drop random thoughts and links for later</p>
-            <div className="w-8 h-8 rounded-full bg-gemini-bg flex items-center justify-center mt-auto self-end text-gemini-textMain group-hover:scale-110 transition-transform">
-              <BrainCircuit size={16} />
-            </div>
+          <button 
+            onClick={() => handleCardClick('Today\'s work goals:', 'notebook')} 
+            className="flex items-center space-x-2 px-4 py-2.5 bg-gemini-surface hover:bg-gemini-surfaceHover rounded-full border border-[#444746] transition-all group"
+          >
+            <span className="text-[#60a5fa] group-hover:scale-110 transition-transform">📅</span>
+            <span className="text-[14px] text-gemini-textMain">Plan my work</span>
+          </button>
+
+          <button 
+            onClick={() => handleCardClick('Just a quick thought...', 'chat')} 
+            className="flex items-center space-x-2 px-4 py-2.5 bg-gemini-surface hover:bg-gemini-surfaceHover rounded-full border border-[#444746] transition-all group"
+          >
+            <span className="text-[#a78bfa] group-hover:scale-110 transition-transform">💭</span>
+            <span className="text-[14px] text-gemini-textMain">Quick thought</span>
           </button>
         </div>
 

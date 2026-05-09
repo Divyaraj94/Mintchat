@@ -9,14 +9,14 @@ export default {
     extend: {
       colors: {
         gemini: {
-          bg: '#131314', // Main background
-          surface: '#1e1f20', // Input background, sidebar
-          surfaceHover: '#333537', // Hover state
-          textMain: '#e3e3e3', // Primary text
-          textMuted: '#c4c7c5', // Secondary text
-          border: '#444746', // Borders
-          primary: '#a8c7fa', // Accent / Links
-          pillBg: '#282a2c' // Tag pill background
+          bg: 'var(--gemini-bg)',
+          surface: 'var(--gemini-surface)',
+          surfaceHover: 'var(--gemini-surface-hover)',
+          textMain: 'var(--gemini-text-main)',
+          textMuted: 'var(--gemini-text-muted)',
+          border: 'var(--gemini-border)',
+          primary: 'var(--gemini-primary)',
+          pillBg: 'var(--gemini-pill-bg)'
         }
       },
       fontFamily: {

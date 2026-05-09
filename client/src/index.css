@@ -3,8 +3,32 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --gemini-bg: #f8fafd;
+    --gemini-surface: #ffffff;
+    --gemini-surface-hover: #f1f3f4;
+    --gemini-text-main: #1f1f1f;
+    --gemini-text-muted: #444746;
+    --gemini-border: #dee1e5;
+    --gemini-primary: #0b57d0;
+    --gemini-pill-bg: #e1e3e1;
+  }
+
+  html.dark {
+    --gemini-bg: #131314;
+    --gemini-surface: #1e1f20;
+    --gemini-surface-hover: #333537;
+    --gemini-text-main: #e3e3e3;
+    --gemini-text-muted: #c4c7c5;
+    --gemini-border: #444746;
+    --gemini-primary: #a8c7fa;
+    --gemini-pill-bg: #282a2c;
+  }
+
   body {
-    @apply bg-gemini-bg text-gemini-textMain antialiased transition-colors duration-300;
+    background-color: var(--gemini-bg) !important;
+    color: var(--gemini-text-main) !important;
+    @apply antialiased transition-colors duration-300;
     font-family: 'Outfit', sans-serif;
   }
 }

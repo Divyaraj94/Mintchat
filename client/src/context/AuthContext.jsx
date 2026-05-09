@@ -29,8 +29,9 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('mindchat-user', JSON.stringify(data));
   };
 
-  const googleAuth = async (credential) => {
-    const { data } = await axios.post('/api/auth/google', { credential });
+  const googleAuth = async (payload) => {
+    // payload can be { credential } or { accessToken }
+    const { data } = await axios.post('/api/auth/google', payload);
     setUser(data);
     localStorage.setItem('mindchat-user', JSON.stringify(data));
   };

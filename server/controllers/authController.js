@@ -46,13 +46,15 @@ export const registerUser = async (req, res) => {
     // 3. Validate email deeply
     try {
       const emailValidation = await validateEmail(email);
-      if (!emailValidation.valid) {
-        return res.status(400).json({ 
-          message: 'Please provide a valid, active email address (no fake/disposable emails)',
-        });
+      // We only block if the format is invalid or if it's a known disposable/spam email.
+      // We skip the strict 'mx' check because it often fails on certain networks even for real emails.
+      if (!emailValidation.validators.regex.valid) {
+        return res.status(400).json({ message: 'Please provide a valid email address format.' });
+      }
+      if (emailValidation.validators.disposable && !emailValidation.validators.disposable.valid) {
+        return res.status(400).json({ message: 'Disposable email addresses are not allowed.' });
       }
     } catch (valErr) {
-      // In case deep-email-validator fails due to network/firewall, we skip or handle gracefully.
       console.warn("Email validation warning:", valErr.message);
     }
 
@@ -101,35 +103,67 @@ export const loginUser = async (req, res) => {
 
 export const googleAuth = async (req, res) => {
   try {
-    const { credential } = req.body;
-    
-    // For local dev without a real Client ID, we decode the JWT token directly.
-    // In production, use client.verifyIdToken()
-    const decodedToken = jwt.decode(credential);
-    
-    if (!decodedToken) {
-      return res.status(400).json({ message: 'Invalid Google Token' });
-    }
+    const { credential, accessToken } = req.body;
+    let email, name, googleId, picture;
 
-    const { email, name, sub: googleId } = decodedToken;
+    if (credential) {
+      // Verify the Google ID Token (Standard component)
+      const ticket = await googleClient.verifyIdToken({
+        idToken: credential,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      if (!payload) return res.status(400).json({ message: 'Invalid Google Token' });
+      email = payload.email;
+      name = payload.name;
+      googleId = payload.sub;
+      picture = payload.picture;
+    } else if (accessToken) {
+      // Verify via access token (Custom button)
+      const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${accessToken}`);
+      const data = await response.json();
+      if (!data.email) return res.status(400).json({ message: 'Invalid Google Access Token' });
+      email = data.email;
+      name = data.name;
+      googleId = data.sub;
+      picture = data.picture;
+    } else {
+      return res.status(400).json({ message: 'No Google credentials provided' });
+    }
 
     let user = await User.findOne({ email });
 
     if (!user) {
       user = await User.create({
         username: name.replace(/\s+/g, '').toLowerCase() + Math.random().toString(36).slice(2, 6),
+        name,
         email,
         googleId,
+        picture,
       });
-    } else if (!user.googleId) {
-      user.googleId = googleId;
-      await user.save();
+    } else {
+      let updated = false;
+      if (!user.googleId) {
+        user.googleId = googleId;
+        updated = true;
+      }
+      if (picture && user.picture !== picture) {
+        user.picture = picture;
+        updated = true;
+      }
+      if (name && user.name !== name) {
+        user.name = name;
+        updated = true;
+      }
+      if (updated) await user.save();
     }
 
     res.json({
       _id: user._id,
       username: user.username,
+      name: user.name || user.username,
       email: user.email,
+      picture: user.picture,
       token: generateToken(user._id),
     });
   } catch (error) {

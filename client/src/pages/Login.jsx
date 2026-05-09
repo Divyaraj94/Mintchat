@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 import { BrainCircuit, EyeOff, Eye, ArrowRight } from 'lucide-react';
+import { useGoogleLogin } from '@react-oauth/google';
 
 function GoogleIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
       <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
       <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
@@ -37,14 +38,17 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    if (!googleClientId) {
-      setError('Google Sign-In is not configured yet. Please set VITE_GOOGLE_CLIENT_ID in your .env file.');
-      return;
-    }
-    setError('Please configure VITE_GOOGLE_CLIENT_ID to enable Google Sign-In.');
-  };
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        await googleAuth({ accessToken: tokenResponse.access_token });
+        navigate('/');
+      } catch (err) {
+        setError('Google Sign-In failed');
+      }
+    },
+    onError: () => setError('Google Sign-In failed'),
+  });
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gemini-bg p-4 font-sans text-gemini-textMain relative overflow-hidden">
@@ -54,7 +58,7 @@ export default function Login() {
         <div className="w-12 h-12 bg-gemini-surface rounded-full shadow-sm flex items-center justify-center mb-4 border border-[#444746]">
           <BrainCircuit className="text-gemini-textMain" size={24} />
         </div>
-        <h1 className="text-3xl font-semibold mb-2 tracking-tight gemini-gradient">MindChat</h1>
+        <h1 className="text-3xl font-semibold mb-2 tracking-tight gemini-gradient">BrainChat</h1>
         <p className="text-gemini-textMuted text-sm">Welcome back to your mindful space</p>
       </div>
 
@@ -110,7 +114,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-[#d3e3fd] hover:bg-[#b4cffb] text-[#041e49] text-sm font-medium py-3 rounded-xl transition-colors flex items-center justify-center space-x-2 mt-4 disabled:opacity-60"
+            className="w-full bg-[#d3e3fd] hover:bg-[#b4cffb] text-[#041e49] text-sm font-medium py-3 rounded-xl transition-colors flex items-center justify-center space-x-2 mt-4 disabled:opacity-60 shadow-lg shadow-blue-500/10"
           >
             {submitting ? (
               <span className="animate-pulse">Signing in...</span>
@@ -120,26 +124,30 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-8 flex items-center justify-center space-x-4">
+        <div className="mt-8 flex items-center justify-center space-x-4 mb-6">
           <div className="h-px bg-[#444746] flex-1" />
           <span className="text-[10px] uppercase text-[#5f6368] tracking-wider font-medium">OR</span>
           <div className="h-px bg-[#444746] flex-1" />
         </div>
 
         <button
-          onClick={handleGoogleLogin}
-          className="mt-6 w-full border border-[#444746] hover:bg-gemini-surfaceHover bg-transparent text-sm font-medium py-3 rounded-xl transition-colors flex items-center justify-center space-x-3 text-gemini-textMain"
+          onClick={() => handleGoogleLogin()}
+          className="w-full border border-[#444746] hover:bg-gemini-surfaceHover bg-transparent text-sm font-medium py-3 rounded-xl transition-all flex items-center justify-center space-x-3 text-gemini-textMain hover:border-[#4285f4]/50 group"
         >
-          <GoogleIcon />
+          <div className="p-1 bg-white rounded-full group-hover:scale-110 transition-transform">
+            <GoogleIcon />
+          </div>
           <span>Continue with Google</span>
         </button>
       </div>
 
       <p className="mt-8 text-sm text-gemini-textMuted relative z-10">
-        New to MindChat?{' '}
+        New to BrainChat?{' '}
         <Link to="/signup" className="text-[#4285f4] hover:underline font-medium">Create account</Link>
       </p>
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-24 h-1 rounded-full bg-[#444746]"></div>
     </div>
   );
 }
+
+

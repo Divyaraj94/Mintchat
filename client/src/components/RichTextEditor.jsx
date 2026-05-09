@@ -1,7 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Mic, Send } from 'lucide-react';
+import { Mic, Send, Plus, ChevronDown } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function RichTextEditor({ onSave, loading }) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [isRecording, setIsRecording] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [text, setText] = useState('');
@@ -23,18 +27,13 @@ export default function RichTextEditor({ onSave, loading }) {
           currentTranscript += event.results[i][0].transcript;
         }
         
-        // Append the new transcript segment to existing text
         setText(prev => {
-          // Add a space if the previous text doesn't end with one
           const space = prev.length > 0 && !prev.endsWith(' ') ? ' ' : '';
           return prev + space + currentTranscript;
         });
       };
 
-      recognitionRef.current.onend = () => {
-        setIsRecording(false);
-      };
-      
+      recognitionRef.current.onend = () => setIsRecording(false);
       recognitionRef.current.onerror = (event) => {
         console.error("Speech recognition error", event.error);
         setIsRecording(false);
@@ -53,7 +52,6 @@ export default function RichTextEditor({ onSave, loading }) {
   };
 
   const handleKeyDown = (e) => {
-    // Save on Enter without Shift
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSaveClick();
@@ -62,18 +60,21 @@ export default function RichTextEditor({ onSave, loading }) {
 
   const handleSaveClick = () => {
     if (!text.trim() || loading) return;
+
+    if (!user) {
+      if (window.confirm("You need to be signed in to start a conversation. Would you like to sign in now?")) {
+        navigate('/login');
+      }
+      return;
+    }
+
     onSave(text);
     setText('');
-    
-    // reset textarea height
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-    }
+    if (textareaRef.current) textareaRef.current.style.height = 'auto';
   };
 
   const handleTextareaChange = (e) => {
     setText(e.target.value);
-    // Auto resize
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
@@ -81,44 +82,53 @@ export default function RichTextEditor({ onSave, loading }) {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 md:left-[68px] lg:left-[280px] right-0 flex justify-center pb-6 pt-4 bg-gradient-to-t from-gemini-bg via-gemini-bg to-transparent px-4">
-      <div className={`w-full max-w-[800px] relative flex flex-col bg-gemini-surface rounded-[24px] shadow-sm border transition-colors ${isFocused ? 'border-[#686b6e]' : 'border-transparent'}`}>
+    <div className="fixed bottom-0 left-0 md:left-[68px] lg:left-[280px] right-0 flex justify-center pb-8 pt-4 bg-gradient-to-t from-gemini-bg via-gemini-bg to-transparent px-4 z-50">
+      <div className={`w-full max-w-[850px] relative flex items-end bg-gemini-surface rounded-[32px] shadow-lg border transition-all duration-300 ${isFocused ? 'border-gemini-primary ring-1 ring-gemini-primary/20' : 'border-[#444746]'}`}>
         
-        {/* Input Area */}
-        <div className="flex items-end px-3 py-3">
-          
-          <textarea
-            ref={textareaRef}
-            value={text}
-            onChange={handleTextareaChange}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask Gemini / Type a thought..."
-            className="flex-1 bg-transparent resize-none overflow-y-auto px-3 py-2 text-[16px] text-gemini-textMain leading-[1.5] outline-none min-h-[48px] max-h-[200px]"
-            rows={1}
-            disabled={loading}
-          />
+        {/* Left Action (Tools) */}
+        <div className="pl-4 pb-3 pr-1">
+          <button className="p-2 rounded-full hover:bg-gemini-surfaceHover text-gemini-textMain transition-colors">
+            <Plus size={20} />
+          </button>
+        </div>
 
-          <div className="flex items-center space-x-2 shrink-0 ml-2 mb-1">
-            <button 
-              onMouseDown={(e) => { e.preventDefault(); toggleMic(); }} 
-              className={`p-2.5 rounded-full transition-colors ${isRecording ? 'bg-red-500/20 text-red-400' : 'hover:bg-gemini-surfaceHover text-gemini-textMuted hover:text-gemini-textMain'}`}
-              title={isRecording ? "Stop recording" : "Use microphone"}
-              disabled={loading}
-            >
-              {isRecording ? <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse m-[5px]"></span> : <Mic size={20} />}
-            </button>
-            
-            <button 
-              onClick={handleSaveClick}
-              disabled={loading || !text.trim()}
-              className="p-2.5 bg-gemini-textMuted hover:bg-gemini-textMain text-gemini-bg rounded-full transition-colors disabled:opacity-50"
-              title="Send"
-            >
-              <Send size={18} />
-            </button>
-          </div>
+        {/* Input Area */}
+        <textarea
+          ref={textareaRef}
+          value={text}
+          onChange={handleTextareaChange}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          onKeyDown={handleKeyDown}
+          placeholder="Ask BrainChat"
+          className="flex-1 bg-transparent resize-none overflow-y-auto px-2 py-5 text-[16px] text-gemini-textMain leading-[1.5] outline-none min-h-[64px] max-h-[200px]"
+          rows={1}
+          disabled={loading}
+        />
+
+        {/* Right Actions */}
+        <div className="flex items-center space-x-1 pr-4 pb-3">
+          {/* Model Selector */}
+          <button className="hidden sm:flex items-center space-x-1 px-3 py-1.5 rounded-full hover:bg-gemini-surfaceHover text-gemini-textMuted hover:text-gemini-textMain transition-colors text-[13px] font-medium mr-2">
+            <span>Fast</span>
+            <ChevronDown size={14} />
+          </button>
+
+          <button 
+            onMouseDown={(e) => { e.preventDefault(); toggleMic(); }} 
+            className={`p-2.5 rounded-full transition-colors ${isRecording ? 'bg-red-500/20 text-red-400' : 'hover:bg-gemini-surfaceHover text-gemini-textMuted hover:text-gemini-textMain'}`}
+            disabled={loading}
+          >
+            {isRecording ? <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></div> : <Mic size={20} />}
+          </button>
+          
+          <button 
+            onClick={handleSaveClick}
+            disabled={loading || !text.trim()}
+            className="p-2.5 text-gemini-textMuted hover:text-gemini-textMain transition-colors disabled:opacity-30"
+          >
+            <Send size={20} />
+          </button>
         </div>
 
       </div>

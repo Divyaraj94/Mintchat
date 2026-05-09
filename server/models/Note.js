@@ -7,9 +7,14 @@ const noteSchema = mongoose.Schema(
       required: true,
       ref: 'User',
     },
+    chatId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'Chat',
+    },
     category: {
       type: String,
-      required: true,
+      default: '',
     },
     content: {
       type: String,
