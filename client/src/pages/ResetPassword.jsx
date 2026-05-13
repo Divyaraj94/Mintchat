@@ -61,14 +61,14 @@ export default function ResetPassword() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#4285f4]/5 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="text-center mb-8 relative z-10 flex flex-col items-center">
-        <div className="w-12 h-12 bg-gemini-surface rounded-full shadow-sm flex items-center justify-center mb-4 border border-[#444746]">
+        <div className="w-12 h-12 bg-gemini-surface rounded-full shadow-sm flex items-center justify-center mb-4 border border-gemini-border">
           <KeyRound className="text-gemini-textMain" size={24} />
         </div>
         <h1 className="text-2xl font-semibold mb-2 tracking-tight">Set New Password</h1>
         <p className="text-gemini-textMuted text-sm">Choose a strong password for your account.</p>
       </div>
 
-      <div className="w-full max-w-md bg-gemini-surface rounded-2xl shadow-xl p-8 relative z-10 border border-[#444746]">
+      <div className="w-full max-w-md bg-gemini-surface rounded-2xl shadow-xl p-8 relative z-10 border border-gemini-border">
         {error && (
           <div className="bg-[#d96570]/10 text-[#d96570] p-3 rounded-lg text-sm mb-5 text-center border border-[#d96570]/20">
             {error}
@@ -93,7 +93,7 @@ export default function ResetPassword() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-gemini-bg border border-[#444746] focus:border-[#4285f4] outline-none transition-all text-sm text-gemini-textMain placeholder:text-[#5f6368]"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl bg-gemini-bg border border-gemini-border focus:border-[#4285f4] outline-none transition-all text-sm text-gemini-textMain placeholder:text-[#5f6368]"
                   placeholder="Enter new password"
                 />
                 <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5f6368] pointer-events-none">
@@ -131,7 +131,7 @@ export default function ResetPassword() {
                   onChange={(e) => setConfirm(e.target.value)}
                   required
                   className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gemini-bg border outline-none transition-all text-sm text-gemini-textMain placeholder:text-[#5f6368] ${
-                    confirm && confirm !== password ? 'border-[#d96570]' : 'border-[#444746] focus:border-[#4285f4]'
+                    confirm && confirm !== password ? 'border-[#d96570]' : 'border-gemini-border focus:border-[#4285f4]'
                   }`}
                   placeholder="Re-enter new password"
                 />

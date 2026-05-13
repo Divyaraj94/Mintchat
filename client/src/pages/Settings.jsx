@@ -24,12 +24,12 @@ export default function Settings() {
     <div 
       onClick={onClick}
       className={cn(
-        "flex items-center justify-between p-4 rounded-2xl bg-gemini-bg border border-[#444746] transition-all",
+        "flex items-center justify-between p-4 rounded-2xl bg-gemini-bg border border-gemini-border transition-all",
         onClick ? "cursor-pointer hover:bg-gemini-surfaceHover hover:border-[#5f6368]" : ""
       )}
     >
       <div className="flex items-center space-x-4">
-        <div className="p-2.5 rounded-xl bg-gemini-surface border border-[#444746] text-gemini-textMuted group-hover:text-gemini-textMain">
+        <div className="p-2.5 rounded-xl bg-gemini-surface border border-gemini-border text-gemini-textMuted group-hover:text-gemini-textMain">
           <Icon size={20} />
         </div>
         <div>
@@ -68,7 +68,7 @@ export default function Settings() {
           <section>
             <h2 className="text-xs font-semibold uppercase tracking-widest text-gemini-textMuted mb-4 px-1">Account Profile</h2>
             <div className="space-y-3">
-              <div className="bg-gemini-surface rounded-3xl p-6 border border-[#444746] shadow-xl relative overflow-hidden group">
+              <div className="bg-gemini-surface rounded-3xl p-6 border border-gemini-border shadow-xl relative overflow-hidden group">
                 <div className="flex items-center space-x-4 relative z-10">
                   <div className="w-14 h-14 rounded-full bg-gemini-primary/20 flex items-center justify-center text-gemini-primary font-bold text-xl border border-gemini-primary/30 overflow-hidden shadow-inner">
                     {user?.picture ? (

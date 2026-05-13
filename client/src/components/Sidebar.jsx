@@ -221,7 +221,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               <Menu size={24} />
             </button>
             {isOpen && (
-              <div className="flex-1 ml-2 flex items-center bg-gemini-surfaceHover rounded-full px-3 py-1.5 border border-[#444746] focus-within:border-gemini-primary transition-colors">
+              <div className="flex-1 ml-2 flex items-center bg-gemini-surfaceHover rounded-full px-3 py-1.5 border border-gemini-border focus-within:border-gemini-primary transition-colors">
                 <Search size={16} className="text-gemini-textMuted" />
                 <input 
                   type="text"
@@ -359,7 +359,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             if (!chat) return null;
             return (
               <div 
-                className="fixed w-44 bg-gemini-surface rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.3)] border border-[#444746] py-1.5 z-[200] animate-fade-in ring-1 ring-black/20"
+                className="fixed w-44 bg-gemini-surface rounded-xl shadow-[0_10px_30px_rgba(0,0,0,0.3)] border border-gemini-border py-1.5 z-[200] animate-fade-in ring-1 ring-black/20"
                 style={{ top: menuPosition.top, left: menuPosition.left }}
                 onClick={(e) => e.stopPropagation()}
               >
@@ -406,14 +406,14 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       {/* New Chat Overlay */}
       {isNewChatOpen && (
         <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in-up">
-          <div className="bg-gemini-surface w-full max-w-md rounded-2xl p-6 border border-[#444746] shadow-2xl relative">
+          <div className="bg-gemini-surface w-full max-w-md rounded-2xl p-6 border border-gemini-border shadow-2xl relative">
             <button 
               onClick={() => setIsNewChatOpen(false)}
-              className="absolute top-4 right-4 text-gemini-textMuted hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-gemini-textMuted hover:text-gemini-textMain transition-colors"
             >
               <X size={20} />
             </button>
-            <h2 className="text-2xl font-medium text-white mb-6">Create New Chat</h2>
+            <h2 className="text-2xl font-medium text-gemini-textMain mb-6">Create New Chat</h2>
             <form onSubmit={handleCreateChat}>
               <div className="mb-6">
                 <label className="block text-gemini-textMuted text-sm mb-2">Chat Name / Heading</label>
@@ -422,7 +422,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                   autoFocus
                   value={newChatName}
                   onChange={(e) => setNewChatName(e.target.value)}
-                  className="w-full bg-gemini-bg border border-[#444746] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-gemini-primary transition-colors"
+                  className="w-full bg-gemini-bg border border-gemini-border text-gemini-textMain rounded-xl px-4 py-3 focus:outline-none focus:border-gemini-primary transition-colors"
                   placeholder="e.g. Project Brainstorm"
                   required
                 />
@@ -454,16 +454,16 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           onClick={() => setIsRenameOpen(false)}
         >
           <div 
-            className="bg-gemini-surface w-full max-w-md rounded-2xl p-6 border border-[#444746] shadow-2xl relative"
+            className="bg-gemini-surface w-full max-w-md rounded-2xl p-6 border border-gemini-border shadow-2xl relative"
             onClick={(e) => e.stopPropagation()}
           >
             <button 
               onClick={() => setIsRenameOpen(false)}
-              className="absolute top-4 right-4 text-gemini-textMuted hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-gemini-textMuted hover:text-gemini-textMain transition-colors"
             >
               <X size={20} />
             </button>
-            <h2 className="text-2xl font-medium text-white mb-6">Rename Chat</h2>
+            <h2 className="text-2xl font-medium text-gemini-textMain mb-6">Rename Chat</h2>
             <form onSubmit={handleRenameSubmit}>
               <div className="mb-6">
                 <input 
@@ -471,7 +471,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
                   autoFocus
                   value={renameValue}
                   onChange={(e) => setRenameValue(e.target.value)}
-                  className="w-full bg-gemini-bg border border-[#444746] text-white rounded-xl px-4 py-3 focus:outline-none focus:border-gemini-primary transition-colors"
+                  className="w-full bg-gemini-bg border border-gemini-border text-gemini-textMain rounded-xl px-4 py-3 focus:outline-none focus:border-gemini-primary transition-colors"
                   required
                 />
               </div>
@@ -498,24 +498,24 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       {/* Sign Out Confirmation Modal */}
       {isSignOutOpen && (
         <div className="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in-up">
-          <div className="bg-gemini-surface w-full max-w-sm rounded-2xl p-6 border border-[#444746] shadow-2xl relative">
+          <div className="bg-gemini-surface w-full max-w-sm rounded-2xl p-6 border border-gemini-border shadow-2xl relative">
             <div className="flex flex-col items-center text-center mb-6">
               <div className="w-14 h-14 rounded-full bg-[#d96570]/10 border border-[#d96570]/20 flex items-center justify-center mb-4">
                 <LogOut size={24} className="text-[#d96570]" />
               </div>
-              <p className="text-lg font-semibold text-white mb-1">Sign out?</p>
+              <p className="text-lg font-semibold text-gemini-textMain mb-1">Sign out?</p>
               <p className="text-gemini-textMuted text-sm">Are you sure you want to sign out of BrainChat?</p>
             </div>
             <div className="flex gap-3">
               <button
                 onClick={() => setIsSignOutOpen(false)}
-                className="flex-1 px-4 py-2.5 rounded-full text-gemini-textMain hover:bg-gemini-surfaceHover transition-colors font-medium text-sm border border-[#444746]"
+                className="flex-1 px-4 py-2.5 rounded-full text-gemini-textMain hover:bg-gemini-surfaceHover transition-colors font-medium text-sm border border-gemini-border"
               >
                 Cancel
               </button>
               <button
                 onClick={handleLogout}
-                className="flex-1 px-4 py-2.5 rounded-full bg-[#d96570] hover:bg-[#c0555f] text-white transition-colors font-medium text-sm"
+                className="flex-1 px-4 py-2.5 rounded-full bg-[#d96570] hover:bg-[#c0555f] text-gemini-textMain transition-colors font-medium text-sm"
               >
                 Sign Out
               </button>
@@ -526,34 +526,34 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       {/* New Notebook Overlay */}
       {isNewNotebookOpen && (
         <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in-up">
-          <div className="bg-gemini-surface w-full max-w-md rounded-2xl p-6 border border-[#444746] shadow-2xl relative">
+          <div className="bg-gemini-surface w-full max-w-md rounded-2xl p-6 border border-gemini-border shadow-2xl relative">
             <button 
               onClick={() => setIsNewNotebookOpen(false)}
-              className="absolute top-4 right-4 text-gemini-textMuted hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-gemini-textMuted hover:text-gemini-textMain transition-colors"
             >
               <X size={20} />
             </button>
-            <h2 className="text-2xl font-medium text-white mb-6">Start New Notebook</h2>
+            <h2 className="text-2xl font-medium text-gemini-textMain mb-6">Start New Notebook</h2>
             <input
               type="text"
               value={newItemTitle}
               onChange={(e) => setNewItemTitle(e.target.value)}
               placeholder="e.g. My Next Story, Daily Journal..."
-              className="w-full bg-gemini-bg border border-[#444746] rounded-xl px-4 py-3 text-white outline-none focus:border-gemini-primary transition-colors mb-6"
+              className="w-full bg-gemini-bg border border-gemini-border rounded-xl px-4 py-3 text-gemini-textMain outline-none focus:border-gemini-primary transition-colors mb-6"
               autoFocus
               onKeyDown={(e) => e.key === 'Enter' && handleCreateItem('notebook')}
             />
             <div className="flex justify-end space-x-3">
               <button 
                 onClick={() => setIsNewNotebookOpen(false)}
-                className="px-4 py-2 text-gemini-textMuted hover:text-white transition-colors"
+                className="px-4 py-2 text-gemini-textMuted hover:text-gemini-textMain transition-colors"
               >
                 Cancel
               </button>
               <button 
                 onClick={() => handleCreateItem('notebook')}
                 disabled={!newItemTitle.trim()}
-                className="px-6 py-2 bg-gemini-primary hover:bg-gemini-primary/90 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-2 bg-gemini-primary hover:bg-gemini-primary/90 text-gemini-textMain rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Create Notebook
               </button>
@@ -565,14 +565,14 @@ export default function Sidebar({ isOpen, setIsOpen }) {
       {/* New Gem Overlay */}
       {isNewGemOpen && (
         <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in-up">
-          <div className="bg-gemini-surface w-full max-w-md rounded-2xl p-6 border border-[#444746] shadow-2xl relative">
+          <div className="bg-gemini-surface w-full max-w-md rounded-2xl p-6 border border-gemini-border shadow-2xl relative">
             <button 
               onClick={() => setIsNewGemOpen(false)}
-              className="absolute top-4 right-4 text-gemini-textMuted hover:text-white transition-colors"
+              className="absolute top-4 right-4 text-gemini-textMuted hover:text-gemini-textMain transition-colors"
             >
               <X size={20} />
             </button>
-            <h2 className="text-2xl font-medium text-white mb-6 flex items-center">
+            <h2 className="text-2xl font-medium text-gemini-textMain mb-6 flex items-center">
               <Diamond size={24} className="text-gemini-primary mr-2" />
               Capture Brain Gem
             </h2>
@@ -581,21 +581,21 @@ export default function Sidebar({ isOpen, setIsOpen }) {
               value={newItemTitle}
               onChange={(e) => setNewItemTitle(e.target.value)}
               placeholder="What's the core idea?"
-              className="w-full bg-gemini-bg border border-[#444746] rounded-xl px-4 py-3 text-white outline-none focus:border-gemini-primary transition-colors mb-6"
+              className="w-full bg-gemini-bg border border-gemini-border rounded-xl px-4 py-3 text-gemini-textMain outline-none focus:border-gemini-primary transition-colors mb-6"
               autoFocus
               onKeyDown={(e) => e.key === 'Enter' && handleCreateItem('gem')}
             />
             <div className="flex justify-end space-x-3">
               <button 
                 onClick={() => setIsNewGemOpen(false)}
-                className="px-4 py-2 text-gemini-textMuted hover:text-white transition-colors"
+                className="px-4 py-2 text-gemini-textMuted hover:text-gemini-textMain transition-colors"
               >
                 Cancel
               </button>
               <button 
                 onClick={() => handleCreateItem('gem')}
                 disabled={!newItemTitle.trim()}
-                className="px-6 py-2 bg-gemini-primary hover:bg-gemini-primary/90 text-white rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(138,180,248,0.3)]"
+                className="px-6 py-2 bg-gemini-primary hover:bg-gemini-primary/90 text-gemini-textMain rounded-xl font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(138,180,248,0.3)]"
               >
                 Save Gem
               </button>

@@ -73,7 +73,7 @@ export default function Dashboard() {
         <div className="flex flex-wrap gap-3 w-full justify-center md:justify-start">
           <button 
             onClick={() => handleCardClick('Start a new story about...', 'notebook')} 
-            className="flex items-center space-x-2 px-4 py-2.5 bg-gemini-surface hover:bg-gemini-surfaceHover rounded-full border border-[#444746] transition-all group"
+            className="flex items-center space-x-2 px-4 py-2.5 bg-gemini-surface hover:bg-gemini-surfaceHover rounded-full border border-gemini-border transition-all group"
           >
             <span className="text-[#f87171] group-hover:scale-110 transition-transform">✍️</span>
             <span className="text-[14px] text-gemini-textMain">Start a story</span>
@@ -89,7 +89,7 @@ export default function Dashboard() {
 
           <button 
             onClick={() => handleCardClick('Today\'s work goals:', 'notebook')} 
-            className="flex items-center space-x-2 px-4 py-2.5 bg-gemini-surface hover:bg-gemini-surfaceHover rounded-full border border-[#444746] transition-all group"
+            className="flex items-center space-x-2 px-4 py-2.5 bg-gemini-surface hover:bg-gemini-surfaceHover rounded-full border border-gemini-border transition-all group"
           >
             <span className="text-[#60a5fa] group-hover:scale-110 transition-transform">📅</span>
             <span className="text-[14px] text-gemini-textMain">Plan my work</span>
@@ -97,7 +97,7 @@ export default function Dashboard() {
 
           <button 
             onClick={() => handleCardClick('Just a quick thought...', 'chat')} 
-            className="flex items-center space-x-2 px-4 py-2.5 bg-gemini-surface hover:bg-gemini-surfaceHover rounded-full border border-[#444746] transition-all group"
+            className="flex items-center space-x-2 px-4 py-2.5 bg-gemini-surface hover:bg-gemini-surfaceHover rounded-full border border-gemini-border transition-all group"
           >
             <span className="text-[#a78bfa] group-hover:scale-110 transition-transform">💭</span>
             <span className="text-[14px] text-gemini-textMain">Quick thought</span>

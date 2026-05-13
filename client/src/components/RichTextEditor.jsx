@@ -83,7 +83,7 @@ export default function RichTextEditor({ onSave, loading }) {
 
   return (
     <div className="fixed bottom-0 left-0 md:left-[68px] lg:left-[280px] right-0 flex justify-center pb-8 pt-4 bg-gradient-to-t from-gemini-bg via-gemini-bg to-transparent px-4 z-50">
-      <div className={`w-full max-w-[850px] relative flex items-end bg-gemini-surface rounded-[32px] shadow-lg border transition-all duration-300 ${isFocused ? 'border-gemini-primary ring-1 ring-gemini-primary/20' : 'border-[#444746]'}`}>
+      <div className={`w-full max-w-[850px] relative flex items-end bg-gemini-surface rounded-[32px] shadow-lg border transition-all duration-300 ${isFocused ? 'border-gemini-primary ring-1 ring-gemini-primary/20' : 'border-gemini-border'}`}>
         
         {/* Left Action (Tools) */}
         <div className="pl-4 pb-3 pr-1">

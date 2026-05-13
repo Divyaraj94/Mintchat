@@ -29,6 +29,7 @@ export const NoteProvider = ({ children }) => {
   const fetchNotes = useCallback(async () => {
     if (!user) return;
     setLoading(true);
+    setNotes([]); // Clear old notes immediately when fetching new ones
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
       
@@ -68,18 +69,31 @@ export const NoteProvider = ({ children }) => {
     }
   };
 
-  const addNote = async (content, chatId) => {
+  const addNote = async (content, chatId, parentId = null) => {
     if (!user || !chatId) return;
     try {
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.post('/api/notes', { content, chatId }, config);
+      const { data } = await axios.post('/api/notes', { content, chatId, parentId }, config);
       
       // If we're viewing this chat, add the note to local state
       if (activeChatId === chatId || !activeChatId) {
         setNotes(prev => [...prev, data]);
       }
+      return data;
     } catch (error) {
       console.error('Error adding note:', error);
+      return null;
+    }
+  };
+
+  const updateNoteStatus = async (id, status) => {
+    if (!user) return;
+    try {
+      const config = { headers: { Authorization: `Bearer ${user.token}` } };
+      const { data } = await axios.put(`/api/notes/${id}/status`, { status }, config);
+      setNotes(prev => prev.map(note => note._id === id ? data : note));
+    } catch (error) {
+      console.error('Error updating status:', error);
     }
   };
 
@@ -167,6 +181,7 @@ export const NoteProvider = ({ children }) => {
       renameChat,
       deleteChatHistory,
       togglePinChat,
+      updateNoteStatus,
       fetchNotes,
       fetchChats
     }}>
